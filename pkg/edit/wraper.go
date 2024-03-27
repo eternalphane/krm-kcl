@@ -26,9 +26,12 @@ func WrapResources(nodes []*yaml.RNode, fc *yaml.RNode) (*yaml.RNode, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = out.Pipe(
-		yaml.Lookup("items"),
-		yaml.Append(ynodes...))
+	items, err := out.Pipe(yaml.Get("items"))
+	if err != nil {
+		return nil, err
+	}
+	items.YNode().Style ^= yaml.FlowStyle
+	_, err = items.Pipe(yaml.Append(ynodes...))
 	if err != nil {
 		return nil, err
 	}
